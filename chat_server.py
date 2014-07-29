@@ -16,6 +16,7 @@ def broadcast_data (sock, message):
  
 if __name__ == "__main__":
     
+    #Simple help output if port is not specified
     if(len(sys.argv) < 2) :
         print 'Usage : python chat_server.py port'
         sys.exit()
@@ -23,18 +24,18 @@ if __name__ == "__main__":
     # List to keep track of socket descriptors
     CONNECTION_LIST = []
     RECV_BUFFER = 4096 # Advisable to keep it as an exponent of 2
-    PORT = int(sys.argv[1])
+    PORT = int(sys.argv[1]) #Sets port to input argument 1
      
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # this has no effect, why ?
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server_socket.bind(("0.0.0.0", PORT))
+    server_socket.bind(("0.0.0.0", PORT)) #bind to all ip address on host
     server_socket.listen(10)
  
     # Add server socket to the list of readable connections
     CONNECTION_LIST.append(server_socket)
  
-    print "Chat server started on port " + str(PORT)
+    print "Chat server started on port " + str(PORT) #output to terminal the chat server port
  
     while 1:
         # Get the list sockets which are ready to be read through select
