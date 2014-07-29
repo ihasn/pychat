@@ -1,6 +1,6 @@
 # Tcp Chat server
  
-import socket, select
+import socket, select, sys
  
 #Function to broadcast chat messages to all connected clients
 def broadcast_data (sock, message):
@@ -15,11 +15,15 @@ def broadcast_data (sock, message):
                 CONNECTION_LIST.remove(socket)
  
 if __name__ == "__main__":
-     
+    
+    if(len(sys.argv) < 2) :
+        print 'Usage : python chat_server.py port'
+        sys.exit()
+ 
     # List to keep track of socket descriptors
     CONNECTION_LIST = []
     RECV_BUFFER = 4096 # Advisable to keep it as an exponent of 2
-    PORT = 5000
+    PORT = int(sys.argv[1])
      
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # this has no effect, why ?
