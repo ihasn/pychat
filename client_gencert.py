@@ -2,7 +2,7 @@ import os.path, sys
 from Crypto.PublicKey import RSA
 
 if(len(sys.argv) < 3) :
-  print 'Usage : python client_gencert.py file_loc key_size'
+  print 'Usage : python client_gencert.py filename key_size'
   sys.exit()
 
 
