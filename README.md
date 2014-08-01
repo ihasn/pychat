@@ -1,16 +1,12 @@
-This is just me testing a chat/file transfer app via python. Looking into making it use SSL.  
+This is just me testing a chat/file transfer app via python. Looking into making it use GnuPG
 
 To operate use the follow:
 
-python chat_server.py port - this starts the server
+python client_gencert.py test.key 1024 # generates a small test key
 
-python client.py chatserverip port - this starts the client and points it to the server and server port
+python reqrep_server.py # starts the server side
 
-Todo
------
-Backend server
+python reqrep_client.py test.key # starts the client side
 
-Client for chat/file transfer
-
-Encrypted comms
+Type message to send encrypted to server.  Server will print encrypted message and reply with encrypted message.  Client will print encrypted message, decrypt message and print decrypted message.
 
