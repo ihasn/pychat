@@ -1,54 +1,28 @@
-# telnet program example
-import socket, select, string, sys
- 
-def prompt() :
-    sys.stdout.write('<You> ')
-    sys.stdout.flush()
- 
-#main function
-if __name__ == "__main__":
-     
-    if(len(sys.argv) < 3) :
-        print 'Usage : python telnet.py hostname port'
-        sys.exit()
-     
-    host = sys.argv[1]
-    port = int(sys.argv[2])
-     
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(2)
-     
-    # connect to remote host
-    try :
-        s.connect((host, port))
-    except :
-        print 'Unable to connect'
-        sys.exit()
-     
-    print 'Connected to remote host. Start sending messages'
-    prompt()
-     
-    while 1:
-        socket_list = [sys.stdin, s]
-         
-        # Get the list sockets which are readable
-        read_sockets, write_sockets, error_sockets = select.select(socket_list , [], [])
-         
-        for sock in read_sockets:
-            #incoming message from remote server
-            if sock == s:
-                data = sock.recv(4096)
-                if not data :
-                    print '\nDisconnected from chat server'
-                    sys.exit()
-                else :
-                    #print data
-                    sys.stdout.write(data)
-                    prompt()
-             
-            #user entered a message
-            else :
-                msg = sys.stdin.readline()
-                s.send(msg)
-                prompt()
-                
+import zmq, os.path, sys, gnupg, getpass
+
+homedir_loc = raw_input('Type gpg home dir: ')
+gpg = gnupg.GPG(binary='/usr/bin/gpg2', homedir=homedir_loc)
+
+print gpg.list_keys()
+
+recip = raw_input('Type recipients key: ')
+password = getpass.getpass()
+
+port = "5556"
+
+context = zmq.Context()
+print "Connecting to server..."
+socket = context.socket(zmq.REQ)
+socket.connect ("tcp://localhost:%s" % port)
+
+#  Do 10 requests, waiting each time for a response
+for request in range (1,10):
+    print "Sending request ", request,"..."
+    message = raw_input("Message: ")
+    encrypt_message = str(gpg.encrypt(message, recip))
+    socket.send (encrypt_message)
+    #  Get the reply.
+    encrypt_message_return = socket.recv()
+    print "Received reply ", request, "[", encrypt_message_return, "]"
+    decrypted_message = str(gpg.decrypt(str(encrypt_message_return), passphrase=password))
+    print "Decrypted message: ", decrypted_message
